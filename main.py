@@ -31,7 +31,7 @@ faction_scores = {
 last_roll_time = {}
 
 # Cooldown duration in seconds (3 hours = 10,800 seconds)
-ROLL_COOLDOWN = 10800  # 3 hours
+ROLL_COOLDOWN = 60  # 3 hours
 
 # Dice events for each faction
 dice_events = {
@@ -87,6 +87,31 @@ async def on_ready():
 @bot.command(name='roll')
 async def roll_dice(ctx):
     """Roll a dice for your faction!"""
+    # Check cooldown
+    current_time = datetime.now()
+    user_id = ctx.author.id
+
+    if user_id in last_roll_time:
+        time_since_last_roll = (current_time - last_roll_time[user_id]).total_seconds()
+        if time_since_last_roll < ROLL_COOLDOWN:
+            time_remaining = ROLL_COOLDOWN - time_since_last_roll
+            hours = int(time_remaining // 3600)
+            minutes = int((time_remaining % 3600) // 60)
+            seconds = int(time_remaining % 60)
+
+            embed = discord.Embed(
+                title="⏰ Cooldown Active",
+                description=f"You need to wait before rolling again!",
+                color=discord.Color.red()
+            )
+            embed.add_field(
+                name="Time Remaining",
+                value=f"{hours}h {minutes}m {seconds}s",
+                inline=False
+            )
+            embed.set_footer(text="Come back later to roll again!")
+            await ctx.send(embed=embed)
+            return
 
     # Get user's faction roles
     user_faction_role = None
