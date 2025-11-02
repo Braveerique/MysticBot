@@ -156,7 +156,7 @@ async def roll_dice(ctx):
     embed.set_thumbnail(url=ctx.author.display_avatar.url)
 
     await ctx.send(f"{dice_emoji}", embed=embed)
-
+    last_roll_time[user_id] = current_time
 
 @bot.command(name='cooldown')
 async def check_cooldown(ctx):
@@ -330,7 +330,7 @@ async def monthly_post():
         )
         embed.set_image(url=image_url)
 
-        await channel.send(f"@everyone")
+
         await channel.send(embed=embed)
 
 
