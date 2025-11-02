@@ -31,7 +31,7 @@ faction_scores = {
 last_roll_time = {}
 
 # Cooldown duration in seconds (3 hours = 10,800 seconds)
-ROLL_COOLDOWN = 60  # 3 hours
+ROLL_COOLDOWN = 10800  # 3 hours
 
 # Dice events for each faction
 dice_events = {
