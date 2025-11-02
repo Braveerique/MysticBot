@@ -18,10 +18,185 @@ intents.members = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# Store faction scores (you can later save this to a database)
+faction_scores = {
+    1407845702255775864: 100,  # Artificers
+    1407845947630686269: 100,  # Charmers
+    1407846005147172904: 100,  # Game Masters
+    1407846008569729124: 100,  # Realtors
+    1407846011535364186: 100,  # TheOutsiders
+}
+
+# Store last roll time for each user (user_id: datetime)
+last_roll_time = {}
+
+# Cooldown duration in seconds (3 hours = 10,800 seconds)
+ROLL_COOLDOWN = 10800  # 3 hours
+
+# Dice events for each faction
+dice_events = {
+    1407845702255775864: {  # Artificers
+        1: ("🔧 Your invention exploded! Lost resources.", -15),
+        2: ("⚙️ Minor breakthrough in your workshop.", +5),
+        3: ("🛠️ Steady progress on your project.", +10),
+        4: ("🔨 Created a useful gadget!", +15),
+        5: ("💡 Brilliant innovation!", +20),
+        6: ("🚀 REVOLUTIONARY INVENTION! The world is amazed!", +30),
+    },
+    1407845947630686269: {  # Charmers
+        1: ("💔 Your charm offensive backfired!", -15),
+        2: ("😊 Made a few new friends.", +5),
+        3: ("💬 Pleasant conversation with allies.", +10),
+        4: ("💖 Won hearts with your charisma!", +15),
+        5: ("✨ Everyone loves you today!", +20),
+        6: ("👑 LEGENDARY CHARM! You're irresistible!", +30),
+    },
+    1407846005147172904: {  # Game Masters
+        1: ("🎲 Your game night was a disaster!", -15),
+        2: ("🃏 Small tournament went okay.", +5),
+        3: ("🎮 Fun gaming session!", +10),
+        4: ("🏆 Epic victory in the arena!", +15),
+        5: ("🎯 Dominating the competition!", +20),
+        6: ("👾 LEGENDARY PLAY! Hall of fame worthy!", +30),
+    },
+    1407846008569729124: {  # Realtors
+        1: ("📉 Property market crashed!", -15),
+        2: ("🏠 Made a small sale.", +5),
+        3: ("🏘️ Decent property deal closed.", +10),
+        4: ("🏢 Sold a premium location!", +15),
+        5: ("🏰 Multiple high-value sales!", +20),
+        6: ("🌆 MEGA DEAL! Sold an entire district!", +30),
+    },
+    1407846011535364186: {  # TheOutsiders
+        1: ("⚠️ Your plan got exposed!", -15),
+        2: ("🌙 Laid low successfully.", +5),
+        3: ("🎭 Pulled off a small scheme.", +10),
+        4: ("🗡️ Executed a clever plot!", +15),
+        5: ("🔥 Chaos spreads in your wake!", +20),
+        6: ("💀 LEGENDARY HEIST! Nobody saw it coming!", +30),
+    },
+}
+
 @bot.event
 async def on_ready():
     print('Yall Ready For This?')
     monthly_post.start()
+
+
+# Dice roll minigame command
+@bot.command(name='roll')
+async def roll_dice(ctx):
+    """Roll a dice for your faction!"""
+
+    # Get user's faction roles
+    user_faction_role = None
+    faction_roles = [1407845702255775864, 1407845947630686269, 1407846005147172904,
+                     1407846008569729124, 1407846011535364186]
+
+    for role in ctx.author.roles:
+        if role.id in faction_roles:
+            user_faction_role = role.id
+            break
+
+    if not user_faction_role:
+        await ctx.send("❌ You need to be in a faction to play! Choose your faction first.")
+        return
+
+    # Roll the dice
+    roll = random.randint(1, 6)
+    event_text, score_change = dice_events[user_faction_role][roll]
+
+    # Update faction score
+    faction_scores[user_faction_role] += score_change
+    new_score = faction_scores[user_faction_role]
+
+    # Get faction name
+    faction_role = ctx.guild.get_role(user_faction_role)
+    faction_name = faction_role.name if faction_role else "Your Faction"
+
+    # Create embed
+    embed = discord.Embed(
+        title=f"🎲 {ctx.author.display_name} rolled a {roll}!",
+        description=event_text,
+        color=discord.Color.gold() if score_change > 0 else discord.Color.red(),
+        timestamp=datetime.now()
+    )
+
+    embed.add_field(name="Score Change", value=f"{'+' if score_change > 0 else ''}{score_change}", inline=True)
+    embed.add_field(name=f"{faction_name} Total", value=f"{new_score} points", inline=True)
+    embed.set_footer(text=f"Roll again to change your faction's fate!")
+
+    # Add dice emoji based on roll
+    dice_emoji = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"][roll - 1]
+    embed.set_thumbnail(url=ctx.author.display_avatar.url)
+
+    await ctx.send(f"{dice_emoji}", embed=embed)
+
+
+@bot.command(name='cooldown')
+async def check_cooldown(ctx):
+    """Check when you can roll again"""
+
+    user_id = ctx.author.id
+
+    if user_id not in last_roll_time:
+        await ctx.send("✅ You can roll now! Use `!roll` to play.")
+        return
+
+    current_time = datetime.now()
+    time_since_last_roll = (current_time - last_roll_time[user_id]).total_seconds()
+
+    if time_since_last_roll >= ROLL_COOLDOWN:
+        await ctx.send("✅ You can roll now! Use `!roll` to play.")
+    else:
+        time_remaining = ROLL_COOLDOWN - time_since_last_roll
+        hours = int(time_remaining // 3600)
+        minutes = int((time_remaining % 3600) // 60)
+        seconds = int(time_remaining % 60)
+
+        embed = discord.Embed(
+            title="⏰ Cooldown Status",
+            description=f"You rolled recently and need to wait.",
+            color=discord.Color.orange()
+        )
+        embed.add_field(
+            name="Time Remaining",
+            value=f"{hours}h {minutes}m {seconds}s",
+            inline=False
+        )
+        embed.set_footer(text="Be patient! Good things come to those who wait.")
+        await ctx.send(embed=embed)
+
+
+# Leaderboard command
+@bot.command(name='scores')
+async def show_scores(ctx):
+    """Show all faction scores"""
+
+    embed = discord.Embed(
+        title="🏆 Faction Leaderboard",
+        description="Current standings in the faction wars!",
+        color=discord.Color.purple(),
+        timestamp=datetime.now()
+    )
+
+    # Sort factions by score
+    sorted_factions = sorted(faction_scores.items(), key=lambda x: x[1], reverse=True)
+
+    medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"]
+
+    for i, (role_id, score) in enumerate(sorted_factions):
+        role = ctx.guild.get_role(role_id)
+        if role:
+            medal = medals[i] if i < len(medals) else "•"
+            embed.add_field(
+                name=f"{medal} {role.name}",
+                value=f"**{score}** points",
+                inline=False
+            )
+
+    embed.set_footer(text="Use !roll to earn points for your faction!")
+    await ctx.send(embed=embed)
 
 ## Category Count
 @bot.event
@@ -130,7 +305,9 @@ async def monthly_post():
         )
         embed.set_image(url=image_url)
 
+        await channel.send(f"@everyone")
         await channel.send(embed=embed)
+
 
 
 @monthly_post.before_loop
