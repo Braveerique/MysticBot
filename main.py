@@ -15,6 +15,29 @@ intents.message_content = True
 intents.messages = True
 intents.members = True
 
+# Character quotes list - each quote has a character name and their quote
+character_quotes = [
+    {"character": "Devil", "quote": "No matter what you will believe me!", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391236679925870/ElectionWinnerDevil.png?ex=690bcbc3&is=690a7a43&hm=db0606a88eecda5132f1bec9c735a3b0bb8e7c6e08d2090931551e8ad7474ecc&"},
+    {"character": "Random Person", "quote": "What am I doing here?", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391316807909376/ElectionWinnerRP.png?ex=690bcbd6&is=690a7a56&hm=ade58f60a767e1733b1d8fbbc7e348670bfdefb8305cde1f33ca855d804cf09d&"},
+    {"character": "Boot", "quote": "This world can be great for both of us, but we have to be great for each other first", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391180186714204/ElectionWinnerBoot.png?ex=690bcbb5&is=690a7a35&hm=e5c17f1888b2d469f624488870bcc970a5f5e8750a32a07d68f03e5306f1a366&"},
+    {"character": "Cat", "quote": "*looks at you expectingly*", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391206598119516/ElectionWinnerCat.png?ex=690bcbbb&is=690a7a3b&hm=f038f7bc48cf7d9a16d0bd792187d50c230982c573fdf80f46d497a871bfb660&"},
+    {"character": "Dog", "quote": "*begins to talk to you but you realize dogs cant speak*", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391244493783132/ElectionWinnerDog.png?ex=690bcbc4&is=690a7a44&hm=97817bd6ba283c00d4b4c4ef0fa129f4eb8725842eee268bfab1459bda7e7c28&"},
+    {"character": "Chaos", "quote": "You stare towards chaos and realize that chaos is whats best for you", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391218396954656/ElectionWinnerChaos.png?ex=690bcbbe&is=690a7a3e&hm=e6a5301988d646a549a1219f92177bc1170199219f874294bc46fb7eab513458&"},
+    {"character": "Headmaster", "quote": "Reading a book is the easiest ways not to be stupid", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391277318537327/ElectionWinnerHeadMaster.png?ex=690bcbcc&is=690a7a4c&hm=305bbe024a605792270ba6b6c07d25c87175b574fcaeef9033dd0bb5e574b694&"},
+    {"character": "Queen of Hearts", "quote": "Love tears down most boundaries, but remember to be yourself", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435393115610681535/ElectionWinnerKQHearts.png?ex=690bcd83&is=690a7c03&hm=acf2cb8d1369e87137fdb38b9efc012b7b79c7468a2ceb6d58d24b3f6ca2a2e3&"},
+    {"character": "Grimes", "quote": "Even those at the bottom can rise when the opportunity presents itself", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391266526466088/ElectionWinnerGrimes.png?ex=690bcbca&is=690a7a4a&hm=0784f8d8eece9c0ee385c49e16e507316a61f054595734665bba49819e5bd248&"},
+    {"character": "Brittany", "quote": "Nothing that a diamond cant fix!", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391196246704300/ElectionWinnerBrittany.png?ex=690bcbb9&is=690a7a39&hm=470424396076ba8d7ed736fe16b8c21ceee34d1e2d3ae98bc6970ba055cfa1ee&"},
+    {"character": "King of Hearts", "quote": "When we hit our lowest point, we are open to the greatest change.", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435393115610681535/ElectionWinnerKQHearts.png?ex=690bcd83&is=690a7c03&hm=acf2cb8d1369e87137fdb38b9efc012b7b79c7468a2ceb6d58d24b3f6ca2a2e3&"},
+    {"character": "Corporation", "quote": "Shouldn't you be working?", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391228115030017/ElectionWinnerCorporation.png?ex=690bcbc1&is=690a7a41&hm=9e16c9b1369c304d09e028c4807337e5e22e6535c5284fef8007b9c01012dcdf&"},
+    {"character": "Angry Old Man", "quote": "Get off my land", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391169050837012/ElectionWinnerAngryOldMan.png?ex=690bcbb2&is=690a7a32&hm=ab74fd7c9f1e0e2f8a49938b48724f8806a05e5bf6ec9212d81342b094945beb&"},
+    {"character": "Farmer", "quote": "Just like people the land need a good foundation to grow", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391256023928872/ElectionWinnerFarmer.png?ex=690bcbc7&is=690a7a47&hm=730056cf86fe9cb0bb430f658c3f1035fdd3832bc674949b67f09605a9893bcc&"},
+    {"character": "Old Man", "quote": "You gain nothing from doing nothing", "image":"https://cdn.discordapp.com/attachments/1434295486046797864/1435391307911659550/ElectionWinnerOM.png?ex=690bcbd4&is=690a7a54&hm=3d36d55c29a8ec47b365f85c843887fa804216cd9342cfa495987631d0cb06fa&"},
+    {"character": "Man of Peace", "quote": "You must find peace without yourself before you can help others.", "image": "https://cdn.discordapp.com/attachments/1434295486046797864/1435391296910000320/ElectionWinnerMOP.png?ex=690bcbd1&is=690a7a51&hm=9b0453ee1c9bec574180d086655ca1b114a8a59f57506ea63db0e02c42e3bfec&"},
+]
+
+# Track which quote to post next
+current_quote_index = 0
+
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
@@ -338,4 +361,40 @@ async def monthly_post():
 @monthly_post.before_loop
 async def before_monthly_post():
     await bot.wait_until_ready()
+
+
+@tasks.loop(hours=168)  # Runs every 24 hours
+async def daily_quote():
+    global current_quote_index
+
+    QUOTE_CHANNEL_ID = 1435365963783606425  # Replace with your desired channel ID
+
+    channel = bot.get_channel(QUOTE_CHANNEL_ID)
+    if channel:
+        # Get the current quote
+        quote_data = character_quotes[current_quote_index]
+        character_name = quote_data["character"]
+        quote = quote_data["quote"]
+        image_url = quote_data["image"]
+
+        embed = discord.Embed(
+            title=f"💭 Daily Quote from {character_name}",
+            description=f"*\"{quote}\"*",
+            color=discord.Color.purple(),
+            timestamp=datetime.now()
+        )
+        embed.set_image(url=image_url)
+        embed.set_footer(text=f"- {character_name}")
+
+        await channel.send(embed=embed)
+
+        # Move to next quote, loop back to start if at the end
+        current_quote_index = (current_quote_index + 1) % len(character_quotes)
+
+
+@daily_quote.before_loop
+async def before_daily_quote():
+    await bot.wait_until_ready()
+
+
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
