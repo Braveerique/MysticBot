@@ -104,7 +104,7 @@ dice_events = {
 async def on_ready():
     print('Yall Ready For This?')
     monthly_post.start()
-
+    daily_quote.start()
 
 # Dice roll minigame command
 @bot.command(name='roll')
